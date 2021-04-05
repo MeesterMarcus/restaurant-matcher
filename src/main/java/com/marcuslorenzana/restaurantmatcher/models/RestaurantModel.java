@@ -2,12 +2,15 @@ package com.marcuslorenzana.restaurantmatcher.models;
 
 import lombok.Data;
 
+/**
+ * POJO for restaurant
+ */
 @Data
 public class RestaurantModel {
     String name;
-    int rating;
-    int distance;
-    int price;
+    Integer rating;
+    Integer distance;
+    Integer price;
     String cuisine;
-    int cuisineId;
+    Integer cuisineId;
 }
