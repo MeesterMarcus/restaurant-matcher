@@ -6,6 +6,7 @@ import com.marcuslorenzana.restaurantmatcher.services.RestaurantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class RestaurantController {
      * @return
      */
     @GetMapping(value="getBestRestaurants")
-    public ResponseEntity<List<RestaurantModel>> getBestRestaurants(@RequestBody RestaurantCriteria criteria) {
+    public ResponseEntity<?> getBestRestaurants(@RequestBody RestaurantCriteria criteria) {
         return this.restaurantService.getBestRestaurants(criteria);
     }
 }

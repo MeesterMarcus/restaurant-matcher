@@ -3,6 +3,7 @@ package com.marcuslorenzana.restaurantmatcher.services;
 import com.marcuslorenzana.restaurantmatcher.models.RestaurantCriteria;
 import com.marcuslorenzana.restaurantmatcher.models.RestaurantModel;
 import com.marcuslorenzana.restaurantmatcher.utils.CSVUtility;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +11,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -39,10 +38,17 @@ public class RestaurantService {
      * @param criteria
      * @return
      */
-    public ResponseEntity<List<RestaurantModel>> getBestRestaurants(RestaurantCriteria criteria) {
+    public ResponseEntity<?> getBestRestaurants(RestaurantCriteria criteria) {
         Set<ConstraintViolation<RestaurantCriteria>> violations = validator.validate(criteria);
+        // if there request was invalid, display the error message and return immediately
         if (violations.size() > 0) {
-            return ResponseEntity.badRequest().build();
+            StringBuilder sb = new StringBuilder();
+            violations.forEach(v -> {
+                sb.append("* " + v.getMessage() + "\n");
+            });
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(sb.toString());
         }
         List<RestaurantModel> restaurantData = csvUtility.retrieveRestaurantData();
         return ResponseEntity.ok(getTopFiveMatches(restaurantData, criteria));
@@ -57,6 +63,7 @@ public class RestaurantService {
      * @return top 5 matches
      */
     private List<RestaurantModel> getTopFiveMatches(List<RestaurantModel> restaurantData, RestaurantCriteria criteria) {
+        // filter the data by the search criteria
         Predicate<RestaurantModel> predicate = Objects::nonNull;
         if (criteria.getName() != null) {
             predicate = predicate.and(r -> r.getName().contains(criteria.getName()));
@@ -70,8 +77,15 @@ public class RestaurantService {
         if (criteria.getPrice() != null) {
             predicate = predicate.and(r -> r.getPrice() <= criteria.getPrice());
         }
+        if (criteria.getCuisine() != null) {
+            predicate = predicate.and(r -> r.getCuisine().equalsIgnoreCase(criteria.getCuisine()));
+        }
+        // finally, sort the list and resolve any tie-breakers
         return restaurantData.stream()
                 .filter(predicate)
+                .sorted(Comparator.comparing(RestaurantModel::getDistance).reversed()
+                    .thenComparing(RestaurantModel::getRating).reversed()
+                    .thenComparing(RestaurantModel::getPrice))
                 .limit(5)
                 .collect(Collectors.toList());
     }
