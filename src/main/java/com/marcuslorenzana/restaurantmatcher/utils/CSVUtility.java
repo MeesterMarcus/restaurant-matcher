@@ -24,7 +24,7 @@ public class CSVUtility {
         List<RestaurantModel> restaurantDataList = new ArrayList<>();
         ClassPathResource resource = new ClassPathResource("csv/restaurants.csv");
         Iterable<CSVRecord> records = getRecords(resource, RESTAURANT_HEADERS);
-        Map<Integer,String> cuisines = retrieveCuisineData();
+        Map<Integer, String> cuisines = retrieveCuisineData();
         for (CSVRecord record : records) {
             RestaurantModel restaurantModel = new RestaurantModel();
             restaurantModel.setName(record.get("name"));
@@ -38,12 +38,12 @@ public class CSVUtility {
         return restaurantDataList;
     }
 
-    public Map<Integer,String> retrieveCuisineData() {
+    public Map<Integer, String> retrieveCuisineData() {
         Map<Integer, String> cuisines = new HashMap<>();
         ClassPathResource resource = new ClassPathResource("csv/cuisines.csv");
         Iterable<CSVRecord> records = getRecords(resource, CUISINE_HEADERS);
         for (CSVRecord record : records) {
-           cuisines.put(Integer.parseInt(record.get("id")), record.get("name"));
+            cuisines.put(Integer.parseInt(record.get("id")), record.get("name"));
         }
         return cuisines;
     }

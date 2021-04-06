@@ -11,7 +11,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -84,8 +87,8 @@ public class RestaurantService {
         return restaurantData.stream()
                 .filter(predicate)
                 .sorted(Comparator.comparing(RestaurantModel::getDistance).reversed()
-                    .thenComparing(RestaurantModel::getRating).reversed()
-                    .thenComparing(RestaurantModel::getPrice))
+                        .thenComparing(RestaurantModel::getRating).reversed()
+                        .thenComparing(RestaurantModel::getPrice))
                 .limit(5)
                 .collect(Collectors.toList());
     }
