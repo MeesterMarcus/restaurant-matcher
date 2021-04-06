@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Primary controller for the application to retrieve restaurant best matches
+ */
 @RestController
 @RequestMapping("api/v1")
 public class RestaurantController {
