@@ -13,10 +13,10 @@ public class RestaurantCriteria {
 
     String name;
 
-    @Max(5)
+    @Max(value = 5, message = "The rating must be between 1 - 5")
     Integer rating;
 
-    @Min(1)
+    @Min(value = 1, message = "The distance must be greater than or equal to 1")
     Integer distance;
 
     Integer price;
